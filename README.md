@@ -9,9 +9,7 @@ To design and verify an **APB (Advanced Peripheral Bus) packet model** using **S
 
 ## Apparatus Required  
 - Computer with **Windows OS**  
-- **ModelSim 2020.1** (or later)  
-- SystemVerilog source code editor  
-
+- **Synopsys VCS** 
 ---
 
 ## Description about APB Packet Modeling  
@@ -32,14 +30,14 @@ In this experiment, we use **SystemVerilog OOP concepts** to model an APB packet
 - Defines an **APB Packet class** with properties (address, data, control signals)  
 - Includes **methods** for packet initialization and display  
 - Demonstrates **object creation and manipulation**  
-- Simulated using **ModelSim 2020.1**  
+- Simulated using **Synopsys VCS**  
 
 ---
 
 ## Procedure  
 
-1. **Open ModelSim 2020.1**  
-   - Launch ModelSim from Start Menu.  
+1. **Open Synopsys VCS**  
+   - Launch Synopsys VCS from Mobaxterm.  
 
 2. **Create a New Project**  
    - `File → New → Project`.  
@@ -72,28 +70,77 @@ In this experiment, we use **SystemVerilog OOP concepts** to model an APB packet
 
 ### APB Packet Class (`apb_packet.sv`)  
 ```systemverilog
-// Skeleton code for APB Packet class
 class apb_packet;
 
-  // Declare properties (e.g., address, data, control signals)
+  // APB packet properties
+  rand bit [31:0] address;
+  rand bit [31:0] data;
+  bit             write;
+  bit             select;
+  bit             enable;
+  bit             ready;
 
   // Constructor
+  function new(
+    bit [31:0] addr = 32'h0000_0000,
+    bit [31:0] dat  = 32'h0000_0000,
+    bit         wr   = 0,
+    bit         sel  = 1,
+    bit         en   = 1,
+    bit         rdy  = 1
+  );
+    address = addr;
+    data    = dat;
+    write   = wr;
+    select  = sel;
+    enable  = en;
+    ready   = rdy;
+  endfunction
 
-  // Method to display packet
+  // Display method
+  function void display();
+    $display("----------------------------------------");
+    $display("           APB PACKET");
+    $display("----------------------------------------");
+    $display("Address : %h", address);
+    $display("Data    : %h", data);
+    $display("Write   : %b", write);
+    $display("Select  : %b", select);
+    $display("Enable  : %b", enable);
+    $display("Ready   : %b", ready);
+    $display("----------------------------------------");
+  endfunction
+
 endclass
 ```
 
 ### APB Packet Class (`apb_tb.sv`) 
 ```systemverilog
-// Skeleton code for APB Packet Testbench
 module apb_tb;
 
-  // Declare object of apb_packet class
+  // Declare APB packet object
+  apb_packet pkt;
 
   initial begin
+
     // Create object
-    // Initialize values
-    // Call display method
+    pkt = new();
+
+    // Initialize packet values
+    pkt.address = 32'h0000_1000;
+    pkt.data    = 32'hABCD_1234;
+    pkt.write   = 1;
+    pkt.select  = 1;
+    pkt.enable  = 1;
+    pkt.ready   = 1;
+
+    // Display packet
+    pkt.display();
+
+    $display("APB packet object created successfully.");
+    $display("Simulation completed.");
+
+    $finish;
   end
 
 endmodule
@@ -101,11 +148,9 @@ endmodule
 ---
 ### Simulation Output
 
-The simulation is carried out using ModelSim 2020.1.
+<img width="1600" height="840" alt="image" src="https://github.com/user-attachments/assets/30121867-b360-4451-9c84-8f8cfc3081fa" />
 
-Output log will show the APB packet details created using class objects.
 
-(Insert console output screenshot here after simulation)
 
 ---
 
